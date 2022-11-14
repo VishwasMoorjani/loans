@@ -1,0 +1,78 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteBase /
+
+    RewriteCond %{HTTP_HOST} !^www\. [NC]
+	RewriteRule ^(.*)$ http://www.clearcenter.com/$1 [L,R=301]
+
+	RewriteCond %{HTTPS} off
+	RewriteRule ^(.*)$ https://www.clearcenter.com/$1 [L,R=301] 
+
+    ###################### Start redirect rules for old URLs ####################################### 
+
+    RewriteRule ^pages/products /products [R=302,NC,L]
+    RewriteRule ^pages/find-partner /partners/find-partner [R=302,NC,L]
+    RewriteRule ^pages/become-partner-hpe /partners/become-partner [R=302,NC,L]
+    RewriteRule ^pages/customers /customers [R=302,NC,L]
+    RewriteRule ^pages/clearcenter-partner-hpe /partners/clearcenter-partner-hpe [R=302,NC,L]
+    RewriteRule ^pages/download-the-latest-idc-analyst-report /downloads [R=302,NC,L]
+    RewriteRule ^pages/recommended-partner /partners/recommended-partner [R=302,NC,L]
+    RewriteRule ^pages/regional-partner /partners/regional-partner [R=302,NC,L]
+    RewriteRule ^pages/become-partner-clearenergy /partners/become-partner [R=302,NC,L]
+    RewriteRule ^pages/blaine / [R=302,NC,L]
+    RewriteRule ^pages/clearcenter-product-demo / [R=302,NC,L]
+    RewriteRule ^pages/let-s-talk-clearcenter / [R=302,NC,L]
+    RewriteRule ^pages/how-can-clearcenter-help-my-business / [R=302,NC,L]
+    RewriteRule ^pages/new-partner-meeting / [R=302,NC,L]
+    RewriteRule ^pages/other / [R=302,NC,L]
+    RewriteRule ^pages/clearcenter-partner-meeting / [R=302,NC,L]
+    RewriteRule ^community/contact /contact [R=302,NC,L]
+    RewriteRule ^pages/brands https://www.clear.co.com/brands [R=302,NC,L]
+    RewriteRule ^pages/store https://www.clear.store [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=1 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=2 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=3 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=4 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=5 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=6 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=7 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=8 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=9 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=10 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=11 https://news.clear.co.com/ [R=302,NC,L]
+    RewriteRule ^pages/blogs/timeline?page=12 https://news.clear.co.com/ [R=302,NC,L]
+
+    
+    RewriteRule ^products/(.*)$ https://www.clear.store/products/$1 [R=302,NC,L]
+    RewriteRule ^collections/(.*)$ https://www.clear.store/collections/$1 [R=302,NC,L]
+    RewriteRule ^blogs/timeline/(.*)$ https://news.clear.co.com/$1 [R=302,NC,L]
+    RewriteRule ^blogs/blog https://news.clear.co.com/category/blog [R=302,NC,L]
+    RewriteRule ^blogs/clearfoundation https://news.clear.co.com/category/clearfoundation [R=302,NC,L]
+    RewriteRule ^blogs/press https://news.clear.co.com/category/press [R=302,NC,L]
+    RewriteRule ^blogs/reviews https://news.clear.co.com/category/reviews [R=302,NC,L]
+
+    ###################### End redirect rules for old URLs ######################################### 
+
+    #Removes access to the system folder by users.
+    #Additionally this will allow you to create a System.php controller,
+    #previously this would not have been possible.
+    #'system' can be replaced if you have renamed your system folder.
+    RewriteCond %{REQUEST_URI} ^system.*
+    RewriteRule ^(.*)$ /index.php?/$1 [L]
+    
+    #When your application folder isn't in the system folder
+    #This snippet prevents user access to the application folder
+    #Submitted by: Fabdrol
+    #Rename 'application' to your applications folder name.
+    RewriteCond %{REQUEST_URI} ^application.*
+    RewriteRule ^(.*)$ /index.php?/$1 [L]
+
+    #Checks to see if the user is attempting to access a valid file,
+    #such as an image or css document, if this isn't true it sends the
+    #request to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php?/$1 [L]
+
+</IfModule>
