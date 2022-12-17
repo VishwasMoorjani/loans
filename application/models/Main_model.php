@@ -663,15 +663,21 @@ class Main_model extends CI_Model
 
 	public function vish($start_date = 'NULL' , $end_date ="NULL") {
 		if($start_date == 'NULL' && $end_date == 'NULL'){
-			$start_date = date('d-m-Y');
-			$end_date = date('d-m-Y');
+			$start_date = date('Y-m-d');
+			$end_date = date('Y-m-d');
 		}
 		$this->db->select('*');
 		$this->db->select("tbl_customers_loan.id as loan_id",  FALSE );
 		$this->db->from('tbl_customers');
 		$this->db->limit(1);  
 		$this->db->join('tbl_customers_loan', 'tbl_customers_loan.customer_id = tbl_customers.client_id');
+		$this->db->join('tbl_payments', 'tbl_payments.pay_loan = tbl_customers_loan.id');
+		$this->db->where("(tbl_payments.add_date BETWEEN \"$start_date\" AND \"$end_date\")");
 		$CustData = $this->db->get()->result_array();
+		if(empty($CustData))
+		{
+			return 0;
+		}
 		$count = 0;
 		foreach($CustData as $customer)
 		{
@@ -679,19 +685,14 @@ class Main_model extends CI_Model
 		$emiTotal = 0;
 		$Balance = 0;
 		$penalty = 0;
-		$this->db->select_sum('emi_paid');
-		$this->db->select('COUNT(emi_paid) as installment', FALSE);
-		$this->db->from('tbl_emi');
-		$this->db->where(array('emi_client =' => $customer['client_id'], 'emi_loan'=>$customer['loan_id']));
-		$this->db->where('emi_payment_date >="'.$start_date.'"');
-		$this->db->where('emi_payment_date <= "'.$end_date.'"');
-		$this->db->where('emi_paid >= 0');
+		$this->db->select_sum('pay_amount');
+		$this->db->from('tbl_payments');
+		$this->db->where(array('pay_client =' => $customer['client_id'], 'pay_loan'=>$customer['loan_id']));
+		$this->db->where("(add_date BETWEEN \"$start_date\" AND \"$end_date\")");
 		$query = $this->db->get()->row_array();
-		print_r($this->db);
-		die();
 		
-		$paidAmount = $query['emi_paid'];
-		$i = $query['installment'];
+		$paidAmount = $query['pay_amount'];
+		$i = $query['pay_amount']/$customer['emi_amount'];
 		$controllerInstance = & get_instance();
         $pAmount = $controllerInstance->totalPenalty($customer['client_id'], $customer['customer_id']);
 
@@ -699,8 +700,7 @@ class Main_model extends CI_Model
 		$this->db->select_sum('waived_off');
 		$this->db->from('tbl_penalty');
 		$this->db->where(array('user_id' => $customer['client_id'], 'loan_id'=>$customer['loan_id']));
-		// $this->db->where(' payment_date >= date("'.$start_date.'")');
-		// $this->db->where( 'payment_date <= date("'.$end_date.'")');
+		$this->db->where("(payment_date BETWEEN \"$start_date\" AND \"$end_date\")");
 		$tbl_penalty = $this->db->get()->row_array();
 		$paid_amount = $tbl_penalty['paid_amount'];
 		$waived_off = $tbl_penalty['waived_off'];
@@ -737,5 +737,3 @@ class Main_model extends CI_Model
 	}
 
 }
-
-?>

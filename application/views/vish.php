@@ -131,7 +131,10 @@
                                 <tbody>
                                     <?php 
                                     $i=1;
-                                    foreach($data['data'] as $entry) { ?>
+                                    if(empty($data['data'])){ ?>
+                                        <tr><td colspan="21"><center>No  Data Found</center></td></tr>
+                                    <?php }else{
+                                       foreach($data['data'] as $entry) { ?>
                                     <tr>
                                         <td><?=$i++?></td>
                                         <td><?=$entry['name']?></td>
@@ -156,7 +159,7 @@
                                         <td><?=$entry['collection_agent']?></td>
                                     </tr>
 
-                                    <?php } ?>
+                                    <?php  } } ?>
                                 </tbody>
 
                             </table>

@@ -4332,11 +4332,7 @@ class Main extends CI_Controller
 		}
 		$this->load->model('main_model', 'Main_model');
 		if($_GET){
-			$start_date = date('d-m-Y',(strtotime($_GET['start_date'])));
-			$end_date = date('d-m-Y',(strtotime($_GET['end_date'])));
-			$data['data'] = $this->Main_model->vish($start_date,$end_date);
-			print_r($data);
-			die();
+			$data['data'] = $this->Main_model->vish($_GET['start_date'],$_GET['end_date']);
 		}
 		else{
 			$data['data'] = $this->Main_model->vish();
