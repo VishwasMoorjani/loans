@@ -11,7 +11,6 @@
 
 
     <style type="text/css">
-
       .select2-container--default .select2-selection--single {
 
 
@@ -113,7 +112,6 @@
 
 
       }
-
     </style>
 
 
@@ -123,7 +121,6 @@
 
 
     <aside class="main-sidebar">
-
 
 
 
@@ -144,109 +141,106 @@
 
     <!-- Content Wrapper. Contains page content -->
 
-
-
+    
     <div class="content-wrapper">
-
-
-
+      
+      
+      
       <!-- Content Header (Page header) -->
 
 
-
+      
       <section class="content-header">
-
-
-
+        
+        
+        
         <h1>
-
-
-
+          
+          
+          
           Customers
-
-
-
+          
+          
+          
           <!--<small>Optional description</small>-->
 
-
-
+          
+          
         </h1>
 
-
-
+        
+        
         <ol class="breadcrumb">
-
-
-
+          
+          
+          
           <li><a href="<?php echo base_url(); ?>main/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-
-
-
+          
+          
+          
           <li class="active">Customers</li>
-
-
-
+          
+          
+          
         </ol>
-
+        
 
 
       </section>
 
-
+      
 
       <!-- Main content -->
-
-
-
+      
+      
+      
       <section class="content container-fluid">
-
-
-
+        
+        
+        
         <div class="box box-primary">
-
-
-
+          
+          
+          
           <div class="box-body">
-
-
-
+            
+            
+            
             <div class="row">
 
 
-
+              
               <div class="col-md-3">
 
-
-
+                
+                
                 <div class="form-group">
-
-
-
+                  
+                  
+                  
                   <label>Sales Agent:</label>
-
-
-
+                  
+                  
+                  
                   <select class="form-control sagent" id="sagent" name="branch">
 
 
 
                     <option value="">Select Sales Agent</option>
 
-  <?php        $CI = &get_instance();
-                  $agents = $CI->report_user();  ?>
+                    <?php $CI = &get_instance();
+                    $agents = $CI->report_user();  ?>
 
                     <?php
 
                     if ($this->session->userdata('user_type') == "super_admin") {
 
                       $employee = $this->db->get_where('tbl_users', array('user_status' => 1, 'user_type' => 'sale'))->result_array();
-
                     } else {
 
 
 
                       $employee = $this->db->get_where('tbl_users', array('user_status' => 1, 'user_branch' => $this->session->userdata('user_branch'), 'user_type' => 'sale'))->result_array();
-
                     }
 
                     foreach ($agents as $emp) : ?>
@@ -298,13 +292,11 @@
                     if ($this->session->userdata('user_type') == "super_admin") {
 
                       $employee = $this->db->get_where('tbl_users', array('user_status' => 1, 'user_type' => 'collection'))->result_array();
-
                     } else {
 
 
 
                       $employee = $this->db->get_where('tbl_users', array('user_status' => 1, 'user_branch' => $this->session->userdata('user_branch'), 'user_type' => 'collection'))->result_array();
-
                     }
 
 
@@ -487,16 +479,16 @@
 
               </div>
 
- <div class="col-md-5">
-                                <div id="reportrange" class="reportrange">
-                                    <div class="reportrange-inner">
-                                        <i class="fa fa-calendar"></i>&nbsp;
-                                        <span></span> <i class="fa fa-caret-down"></i>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="" id="hidden_start_date">
-                                <input type="hidden" name="" id="hidden_end_date">
-                            </div>
+              <div class="col-md-5">
+                <div id="reportrange" class="reportrange">
+                  <div class="reportrange-inner">
+                    <i class="fa fa-calendar"></i>&nbsp;
+                    <span></span> <i class="fa fa-caret-down"></i>
+                  </div>
+                </div>
+                <input type="hidden" name="" id="hidden_start_date">
+                <input type="hidden" name="" id="hidden_end_date">
+              </div>
 
 
 
@@ -519,7 +511,6 @@
 
 
           <div class="col-md-12">
-
 
 
             <?php if (!empty($this->session->flashdata('HeadError_msg'))) { ?>
@@ -623,6 +614,10 @@
 
 
                     <th>Loan Amount</th>
+                    
+                    <th>Principle Amount</th>
+                    
+                    <th>Interest Amount</th>
 
 
 
@@ -684,23 +679,20 @@
                       $this->db->order_by('a.client_id', 'desc');
 
                       $clients = $this->db->get()->result_array();
-
                     }
 
                     foreach ($clients as $data) :
-
-
-
-
-
+                      
+                      
+                      
+                      
                       $total_loan += $data['loan_amount']; ?>
 
 
 
+
                       <tr>
-
-
-
+                        <td><?php echo $data['loan_account']; ?></td>
                         <td><?php echo $data['loan_account']; ?></td>
 
 
@@ -768,19 +760,15 @@
                         <td><label class="label label-info"><?php if ($data['loan_status'] == "Submitted") {
 
                                                               echo "Application Submitted";
-
                                                             } else if ($data['loan_status'] == "Disbursed") {
 
                                                               echo "Application Disbursed";
-
                                                             } else if ($data['loan_status'] == "Approved") {
 
                                                               echo "Application Approved";
-
-                                                            } else if($data['loan_status'] == "Pending") {
+                                                            } else if ($data['loan_status'] == "Pending") {
 
                                                               echo "Application Pending";
-
                                                             } ?></label></td>
 
 
@@ -930,7 +918,6 @@
     <?php if (isset($type)) {  ?>
 
       <script>
-
         $("#status").val(<?php echo "'" . $type . "'" ?>).trigger('change');
 
 
@@ -1042,7 +1029,6 @@
 
 
         })
-
       </script>
 
     <?php } ?>
@@ -1158,7 +1144,6 @@
 
 
     <script>
-
       $(document).ready(function() {
 
 
@@ -2017,64 +2002,63 @@
 
 
 
-    <?php if (!isset($type)) {  ?>
+      <?php if (!isset($type)) {  ?>
 
-      $(document).ready(function() {
+        $(document).ready(function() {
 
-        var loginUserId = '<?php echo  $this->session->userdata('user_id');  ?>';
+          var loginUserId = '<?php echo  $this->session->userdata('user_id');  ?>';
 
-        var loginUserType = '<?php echo  $this->session->userdata('user_type');  ?>';
+          var loginUserType = '<?php echo  $this->session->userdata('user_type');  ?>';
 
-        $.ajax({
-
-
-
-          url: "<?php echo base_url(); ?>main/getFilteredClient?loginUserId=" + loginUserId + '&loginUserType=' + loginUserType,
+          $.ajax({
 
 
 
-          beforeSend: function() {
+            url: "<?php echo base_url(); ?>main/getFilteredClient?loginUserId=" + loginUserId + '&loginUserType=' + loginUserType,
 
 
 
-            $('#loading-image').show();
+            beforeSend: function() {
 
 
 
-          },
+              $('#loading-image').show();
 
 
 
-          complete: function() {
+            },
 
 
 
-            $('#loading-image').hide();
+            complete: function() {
 
 
 
-          },
+              $('#loading-image').hide();
 
 
 
-          success: function(data) {
+            },
 
 
 
-            $("tbody").html(data);
+            success: function(data) {
 
 
 
-          }
+              $("tbody").html(data);
+
+
+
+            }
+
+
+
+          });
 
 
 
         });
 
-
-
-      });
-
       <?php } ?>
-
     </script>

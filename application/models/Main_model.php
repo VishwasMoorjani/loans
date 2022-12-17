@@ -661,6 +661,81 @@ class Main_model extends CI_Model
 
 	}
 
+	public function vish($start_date = 'NULL' , $end_date ="NULL") {
+		if($start_date == 'NULL' && $end_date == 'NULL'){
+			$start_date = date('d-m-Y');
+			$end_date = date('d-m-Y');
+		}
+		$this->db->select('*');
+		$this->db->select("tbl_customers_loan.id as loan_id",  FALSE );
+		$this->db->from('tbl_customers');
+		$this->db->limit(1);  
+		$this->db->join('tbl_customers_loan', 'tbl_customers_loan.customer_id = tbl_customers.client_id');
+		$CustData = $this->db->get()->result_array();
+		$count = 0;
+		foreach($CustData as $customer)
+		{
+		$count++;	
+		$emiTotal = 0;
+		$Balance = 0;
+		$penalty = 0;
+		$this->db->select_sum('emi_paid');
+		$this->db->select('COUNT(emi_paid) as installment', FALSE);
+		$this->db->from('tbl_emi');
+		$this->db->where(array('emi_client =' => $customer['client_id'], 'emi_loan'=>$customer['loan_id']));
+		$this->db->where('emi_payment_date >="'.$start_date.'"');
+		$this->db->where('emi_payment_date <= "'.$end_date.'"');
+		$this->db->where('emi_paid >= 0');
+		$query = $this->db->get()->row_array();
+		print_r($this->db);
+		die();
+		
+		$paidAmount = $query['emi_paid'];
+		$i = $query['installment'];
+		$controllerInstance = & get_instance();
+        $pAmount = $controllerInstance->totalPenalty($customer['client_id'], $customer['customer_id']);
+
+		$this->db->select_sum('paid_amount');
+		$this->db->select_sum('waived_off');
+		$this->db->from('tbl_penalty');
+		$this->db->where(array('user_id' => $customer['client_id'], 'loan_id'=>$customer['loan_id']));
+		// $this->db->where(' payment_date >= date("'.$start_date.'")');
+		// $this->db->where( 'payment_date <= date("'.$end_date.'")');
+		$tbl_penalty = $this->db->get()->row_array();
+		$paid_amount = $tbl_penalty['paid_amount'];
+		$waived_off = $tbl_penalty['waived_off'];
+		$TotalPaid = $paid_amount;
+		
+
+		$data[$count]['name'] = $customer['client_name'];
+		$data[$count]['address'] = $customer['client_current_address'];
+		$data[$count]['mobile'] = $customer['client_mobile'];
+		$data[$count]['status'] = $customer['loan_status'];
+		
+		$data[$count]['disbursed_date'] = date('d M,Y' , strtotime($customer['disbursed_date'])); //Disbursed Date
+
+		if($customer['loan_status'] == 'Closed'){
+			$data[$count]['closing_date'] = date('d M,Y' , strtotime($customer['application_date'])); //Closing Date
+		}
+		$data[$count]['emi_amount'] = $customer['emi_amount']; //Emi Amount
+		$data[$count]['emi_principal'] = (float)$customer['emi_amount']*((100 - $customer['interest_rate'])/100); //Emi Principal
+		$data[$count]['emi_interest'] = (float)$customer['emi_amount']*($customer['interest_rate']/100); //Emi interest
+		$data[$count]['installments'] =  $i; //Paid Emis
+		$data[$count]['total_interest'] =  (float)((int)$i*(float)($customer['emi_amount'])*((float)$customer['interest_rate']/100)); //Total Interest
+		$data[$count]['processing_fee'] =  (float)$customer['loan_amount']*((float)$customer['processing_fee']/100); //processing_fee
+		$data[$count]['total_emi'] =  $customer['loan_amount']; //Total emi
+		$data[$count]['paid_emi'] =  $paidAmount; //Total Deposited Amt
+		$data[$count]['rest_emi'] =  $customer['loan_amount'] - $paidAmount; //Remaining Amt	
+
+		$data[$count]['total_penalty'] =  $pAmount; //Total Penalty
+		$data[$count]['paid_penalty'] =  $TotalPaid; //Penalty Deposit
+		$data[$count]['pending_penalty'] =  $pAmount - $TotalPaid; //Penalty Pending
+		$data[$count]['sales_agent'] = $this->db->get_where('tbl_users', array('user_id' => $customer['application_user']))->row_array()['user_name'];
+		$data[$count]['collection_agent'] = $this->db->get_where('tbl_users', array('user_id' => $customer['collection_user']))->row_array()['user_name'];
+		}
+		return $data;
+	}
+
 }
 
 ?>
